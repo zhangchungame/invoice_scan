@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dandinglong.mapper.BaiduAppProcessTimesMapper">
+    <resultMap id="baiduProcessTimes" type="com.dandinglong.entity.BaiduAppProcessTimesEntity">
+        <id column="id" property="id"></id>
+        <result column="scan_type" property="scanType"></result>
+        <result column="process_times" property="processTimes"></result>
+    </resultMap>
+    <select id="lockProcessTimes" parameterType="com.dandinglong.entity.BaiduAppProcessTimesEntity" resultMap="baiduProcessTimes">
+        select * from baidu_app_process_times where id=#{id} for update
+    </select>
+    <update id="processTimesAdd" >
+        update baidu_app_process_times set process_times=process_times+1 where id=#{id}
+    </update>
+
+</mapper>
