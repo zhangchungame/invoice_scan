@@ -4,5 +4,7 @@
     <update id="updateLastLoginTime" parameterType="com.dandinglong.entity.UserEntity">
         update user set last_login_time=SYSDATE() where id=#{id};
     </update>
-
+    <update id="consumScore" >
+        update user set today_used_score=today_used_score-#{usedScore} where today_used_score>=#{usedScore} and id=#{userId}
+    </update>
 </mapper>

@@ -26,6 +26,7 @@ public class ImageDealService {
             scanImageByDayDetailEntity.setInsertTime(new Date());
             scanImageByDayDetailEntity.setUploadNum(1);
             scanImageByDayDetailEntity.setScanNum(0);
+            scanImageByDayDetailEntity.setExcelStep(0);
             try{
                 scanImageByDayDetailMapper.insert(scanImageByDayDetailEntity);
             }catch (DuplicateKeyException e){

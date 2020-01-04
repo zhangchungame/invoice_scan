@@ -20,10 +20,30 @@ public class ScanImageByDayDetailEntity {
     private Integer uploadNum;
     @Column(name = "scan_num")
     private Integer scanNum;
+    @Column(name = "excel_step")
+    private Integer excelStep;
+    @Column(name = "excel_file")
+    private String excelFile;
     @Column(name = "insert_time")
     private Date insertTime;
     @Column(name = "update_time")
     private Date updateTime;
+
+    public String getExcelFile() {
+        return excelFile;
+    }
+
+    public void setExcelFile(String excelFile) {
+        this.excelFile = excelFile;
+    }
+
+    public Integer getExcelStep() {
+        return excelStep;
+    }
+
+    public void setExcelStep(Integer excelStep) {
+        this.excelStep = excelStep;
+    }
 
     public Integer getId() {
         return id;

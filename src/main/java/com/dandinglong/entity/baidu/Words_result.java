@@ -15,7 +15,7 @@ public class Words_result {
     private String AmountInWords;
     private String NoteDrawer;
     private String SellerAddress;
-    private List<String> CommodityPrice;
+    private List<CommodityPrice> CommodityPrice;
     private List<CommodityNum> CommodityNum;
     private String SellerRegisterNum;
     private String SellerBank;
@@ -68,11 +68,11 @@ public class Words_result {
         SellerAddress = sellerAddress;
     }
 
-    public List<String> getCommodityPrice() {
+    public List<com.dandinglong.entity.baidu.CommodityPrice> getCommodityPrice() {
         return CommodityPrice;
     }
 
-    public void setCommodityPrice(List<String> commodityPrice) {
+    public void setCommodityPrice(List<com.dandinglong.entity.baidu.CommodityPrice> commodityPrice) {
         CommodityPrice = commodityPrice;
     }
 

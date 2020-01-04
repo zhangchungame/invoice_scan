@@ -22,7 +22,7 @@ public class BaiduScanResultExchangeUtil {
         ),
         Math.max(
         Math.max(words_result.getCommodityTax().size(),words_result.getCommodityName().size()),
-        words_result.getCommodityUnit().size()
+        Math.max(words_result.getCommodityUnit().size(),words_result.getCommodityPrice().size())
         ));
         for (int i = 0; i < size; i++) {
             InvoiceDetailEntity invoiceDetailEntity = new InvoiceDetailEntity();
@@ -52,6 +52,10 @@ public class BaiduScanResultExchangeUtil {
             }
             try {
                 invoiceDetailEntity.setCommodityUnit(words_result.getCommodityUnit().get(i).getWord());
+            } catch (Exception e) {
+            }
+            try {
+                invoiceDetailEntity.setCommodityPrice(words_result.getCommodityPrice().get(i).getWord());
             } catch (Exception e) {
             }
             invoiceEntity.getInvoiceDetailEntityList().add(invoiceDetailEntity);

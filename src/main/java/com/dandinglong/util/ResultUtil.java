@@ -20,7 +20,7 @@ public class ResultUtil {
     public static JsonResult fail(Exception e){
         JsonResult jsonResult=new JsonResult();
         jsonResult.setCode(500);
-        jsonResult.setMsg(e.getMessage());
+        jsonResult.setMsg("系统错误");
         return jsonResult;
     }
 }

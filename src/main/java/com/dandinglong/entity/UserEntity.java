@@ -22,10 +22,30 @@ public class UserEntity {
     private String country;
     @Column(name = "gender")
     private String gender;
+    @Column(name = "today_used_score")
+    private Integer todayUsedScore;
+    @Column(name = "free_score_for_day")
+    private Integer freeScoreForDay;
     @Column(name = "register_time")
     private Date registerTime;
     @Column(name = "last_login_time")
     private Date lastLoginTime;
+
+    public Integer getTodayUsedScore() {
+        return todayUsedScore;
+    }
+
+    public void setTodayUsedScore(Integer todayUsedScore) {
+        this.todayUsedScore = todayUsedScore;
+    }
+
+    public Integer getFreeScoreForDay() {
+        return freeScoreForDay;
+    }
+
+    public void setFreeScoreForDay(Integer freeScoreForDay) {
+        this.freeScoreForDay = freeScoreForDay;
+    }
 
     public Integer getId() {
         return id;

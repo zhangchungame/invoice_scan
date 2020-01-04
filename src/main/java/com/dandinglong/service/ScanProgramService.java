@@ -2,14 +2,19 @@ package com.dandinglong.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dandinglong.entity.Code2Session;
+import com.dandinglong.entity.ScanImageByDayDetailEntity;
 import com.dandinglong.entity.UploadFileEntity;
 import com.dandinglong.entity.UserEntity;
 import com.dandinglong.exception.MiniProgreamLoginException;
 import com.dandinglong.exception.MultipyUserException;
+import com.dandinglong.exception.UserScoreNotEnoughException;
+import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.mapper.UserMapper;
 import com.dandinglong.model.*;
 import com.dandinglong.task.UploadFileDealRunnable;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -30,6 +35,9 @@ public class ScanProgramService {
     private String appId;
     @Value("${scanxiaochengxu.secret}")
     private String secret;
+    @Value("${user.freeScore}")
+    private int freeScore;
+
     @Autowired
     private ImageDealService imageDealService;
     @Autowired
@@ -40,6 +48,10 @@ public class ScanProgramService {
     private ThreadPoolExecutor threadPoolExecutor;
     @Autowired
     private AipOcrClientSelector aipOcrClientSelector;
+    @Autowired
+    private UserScoreProcessorService userScoreProcessorService;
+    @Autowired
+    private ScanImageByDayDetailMapper scanImageByDayDetailMapper;
 
     /**
      * 用户登录，为注册用户注册
@@ -60,6 +72,8 @@ public class ScanProgramService {
             case 0:
                 userEntity=new UserEntity();
                 userEntity.setOpenId(openId);
+                userEntity.setTodayUsedScore(freeScore);
+                userEntity.setFreeScoreForDay(freeScore);
                 userEntity.setRegisterTime(new Date());
                 userEntity.setLastLoginTime(new Date());
                 userMapper.insert(userEntity);
@@ -102,6 +116,9 @@ public class ScanProgramService {
      * @return
      */
     public String dealUploadImage(String filePath,String fileName,UserEntity userEntity){
+        if(!userScoreProcessorService.divAndCheckScore(userEntity.getId(),"invoice")){
+            throw new UserScoreNotEnoughException("您的今日免费积分不足");
+        }
         UploadFileEntity uploadFileEntity=new UploadFileEntity();
         uploadFileEntity.setFileName(fileName);
         uploadFileEntity.setFilePath(filePath);
@@ -118,5 +135,13 @@ public class ScanProgramService {
         return "ok";
     }
 
+    public PageInfo<ScanImageByDayDetailEntity> getScanEntityList(int userId,int pageNum){
+        Example example=new Example(ScanImageByDayDetailEntity.class);
+        example.createCriteria().andEqualTo("userId",userId);
+        example.orderBy("dealDate").desc();
+        PageHelper.startPage(pageNum,10);
+        PageInfo<ScanImageByDayDetailEntity> pageinfo=new PageInfo<>(scanImageByDayDetailMapper.selectByExample(example));
+        return pageinfo;
+    }
 
 }

@@ -50,4 +50,11 @@ public class ScanProgramController {
         scanProgramService.dealUploadImage(uploadFileLocation,filename,userEntity);
         return ResultUtil.success("OK");
     }
+    @RequestMapping("/batch/batchList")
+    public JsonResult batchList(@RequestParam(value = "pageNum",defaultValue = "1")int pageNum){
+        HttpSession session=httpServletRequest.getSession();
+        UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
+        return ResultUtil.success(scanProgramService.getScanEntityList(userEntity.getId(),pageNum));
+
+    }
 }

@@ -30,8 +30,18 @@ public class InvoiceDetailEntity {
     private String CommodityTaxRate;
     @Column(name = "CommodityUnit")
     private String CommodityUnit;
+    @Column(name = "CommodityPrice")
+    private String CommodityPrice;
     @Column(name = "insert_time")
     private Date insertTime;
+
+    public String getCommodityPrice() {
+        return CommodityPrice;
+    }
+
+    public void setCommodityPrice(String commodityPrice) {
+        CommodityPrice = commodityPrice;
+    }
 
     public String getCommodityUnit() {
         return CommodityUnit;

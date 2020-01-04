@@ -1,5 +1,6 @@
 package com.dandinglong.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,9 +18,9 @@ public class DealUploadFileQueueConfig {
     }
 
     @Bean
-    public ThreadPoolExecutor getPool() {
+    public ThreadPoolExecutor getPool(@Value("${threadPoolCoreSize}" )int coresize,@Value("${threadPoolMaxSize}" )int maxSize) {
         BlockingQueue<Runnable> queue = getQueue();
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 8, 5, TimeUnit.MINUTES, queue);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coresize, maxSize, 5, TimeUnit.MINUTES, queue);
         return threadPoolExecutor;
     }
 }
