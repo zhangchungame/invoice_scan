@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 public class ScanProgramController {
@@ -56,5 +57,9 @@ public class ScanProgramController {
         UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
         return ResultUtil.success(scanProgramService.getScanEntityList(userEntity.getId(),pageNum));
 
+    }
+    @RequestMapping("/batch/batchDetail")
+    public JsonResult batchDetail(@RequestParam(value = "batchId")int batchId) throws ParseException {
+        return ResultUtil.success(scanProgramService.selectBatchTypeAndProcess(batchId));
     }
 }

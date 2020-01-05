@@ -18,9 +18,10 @@ public class DealUploadFileQueueConfig {
     }
 
     @Bean
-    public ThreadPoolExecutor getPool(@Value("${threadPoolCoreSize}" )int coresize,@Value("${threadPoolMaxSize}" )int maxSize) {
+    public ThreadPoolExecutor getPool() {
         BlockingQueue<Runnable> queue = getQueue();
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coresize, maxSize, 5, TimeUnit.MINUTES, queue);
+        int coreSize=Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coreSize, coreSize*2, 5, TimeUnit.MINUTES, queue);
         return threadPoolExecutor;
     }
 }

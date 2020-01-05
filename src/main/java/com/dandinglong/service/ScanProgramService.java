@@ -7,6 +7,7 @@ import com.dandinglong.entity.UploadFileEntity;
 import com.dandinglong.entity.UserEntity;
 import com.dandinglong.exception.MiniProgreamLoginException;
 import com.dandinglong.exception.MultipyUserException;
+import com.dandinglong.exception.StartingGenerateExcelException;
 import com.dandinglong.exception.UserScoreNotEnoughException;
 import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
@@ -25,8 +26,11 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
@@ -38,6 +42,8 @@ public class ScanProgramService {
     @Value("${user.freeScore}")
     private int freeScore;
 
+    @Autowired
+    private ExcelDealService excelDealService;
     @Autowired
     private ImageDealService imageDealService;
     @Autowired
@@ -143,5 +149,26 @@ public class ScanProgramService {
         PageInfo<ScanImageByDayDetailEntity> pageinfo=new PageInfo<>(scanImageByDayDetailMapper.selectByExample(example));
         return pageinfo;
     }
-
+    public Object selectBatchTypeAndProcess(int batchId) throws ParseException {
+        Map<String,Object> result=new HashMap<>();
+        ScanImageByDayDetailEntity scanImageByDayDetailEntity = scanImageByDayDetailMapper.selectByPrimaryKey(batchId);
+        if(scanImageByDayDetailEntity.getExcelStep()==0){
+            if(excelDealService.generateExcelStarting(scanImageByDayDetailEntity.getUserId(),scanImageByDayDetailEntity.getDealDate())){
+                result.put("type","startDeal");
+                result.put("msg","开始生成，请稍后刷新重试");
+                return result;
+            }else{
+                throw new StartingGenerateExcelException("生成excel任务出错，请重试");
+            }
+        }else if(scanImageByDayDetailEntity.getExcelStep()==1){
+            result.put("type","isDealing");
+            result.put("msg","正在生成队列中，请稍后刷新重试");
+            return result;
+        }else{
+            result.put("type","hasDeal");
+            result.put("msg","已生成");
+            result.put("data",excelDealService.excelDetail(scanImageByDayDetailEntity.getUserId(),scanImageByDayDetailEntity.getDealDate()));
+            return result;
+        }
+    }
 }

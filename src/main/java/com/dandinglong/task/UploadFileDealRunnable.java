@@ -13,9 +13,11 @@ import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.model.ImageCompress;
 import com.dandinglong.model.ImageRecognition;
+import com.dandinglong.model.qiniu.FileSaveSys;
 import com.dandinglong.util.ApplicationContextProvider;
 import com.dandinglong.util.BaiduScanResultExchangeUtil;
 import com.dandinglong.util.DateFormaterUtil;
+import com.qiniu.common.QiniuException;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
@@ -48,6 +50,11 @@ public class UploadFileDealRunnable implements Runnable {
             imageCompress.compress(uploadFileEntity.getFilePath() + uploadFileEntity.getFileName());
             recognition = imageRecognition.recognition(uploadFileEntity.getFilePath() + uploadFileEntity.getFileName());
         } catch (Exception e) {
+            try {
+                uploadFileEntity.setFileName(FileSaveSys.uploadFile(uploadFileEntity.getFilePath(),uploadFileEntity.getFileName()));
+            } catch (QiniuException e2) {
+                e2.printStackTrace();
+            }
             //标记图片识别失败
             uploadFileEntity.setStep(3);
             uploadFileEntity.setUpdateTime(new Date());
