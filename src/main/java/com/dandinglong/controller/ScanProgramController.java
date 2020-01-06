@@ -62,4 +62,10 @@ public class ScanProgramController {
     public JsonResult batchDetail(@RequestParam(value = "batchId")int batchId) throws ParseException {
         return ResultUtil.success(scanProgramService.selectBatchTypeAndProcess(batchId));
     }
+    @RequestMapping("/batch/reProcess")
+    public JsonResult reProcess(@RequestParam(value = "batchId")int batchId) throws ParseException {
+        HttpSession session=httpServletRequest.getSession();
+        UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
+        return ResultUtil.success(scanProgramService.reGenerateExcel(batchId,userEntity.getId()));
+    }
 }

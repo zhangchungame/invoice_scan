@@ -14,6 +14,7 @@ import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.mapper.UserMapper;
 import com.dandinglong.model.*;
 import com.dandinglong.task.UploadFileDealRunnable;
+import com.dandinglong.util.DateFormaterUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import okhttp3.Call;
@@ -149,6 +150,24 @@ public class ScanProgramService {
         PageInfo<ScanImageByDayDetailEntity> pageinfo=new PageInfo<>(scanImageByDayDetailMapper.selectByExample(example));
         return pageinfo;
     }
+
+    public Object reGenerateExcel(int batchId,int userId) throws ParseException {
+        ScanImageByDayDetailEntity scanImageByDayDetailEntity = scanImageByDayDetailMapper.selectByPrimaryKey(batchId);
+        if(userId!=scanImageByDayDetailEntity.getUserId()){
+            throw new StartingGenerateExcelException("非正确用户请求");
+        }
+        if(!scanImageByDayDetailEntity.getDealDate().equals(DateFormaterUtil.YMDformater.get().format(new Date()))){
+            throw new StartingGenerateExcelException("只能重新更新当天的文件");
+        }
+        if(scanImageByDayDetailEntity.getExcelStep()!=2){
+           throw new StartingGenerateExcelException("生成状态不正确，请勿重复点击");
+        }
+        scanImageByDayDetailEntity.setExcelStep(0);
+        scanImageByDayDetailEntity.setUpdateTime(new Date());
+        scanImageByDayDetailMapper.updateByPrimaryKey(scanImageByDayDetailEntity);
+        return selectBatchTypeAndProcess(batchId);
+    }
+
     public Object selectBatchTypeAndProcess(int batchId) throws ParseException {
         Map<String,Object> result=new HashMap<>();
         ScanImageByDayDetailEntity scanImageByDayDetailEntity = scanImageByDayDetailMapper.selectByPrimaryKey(batchId);
