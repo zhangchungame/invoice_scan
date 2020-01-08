@@ -27,6 +27,8 @@ public class ExcelDealService {
     private ThreadPoolExecutor threadPoolExecutor;
     @Autowired
     private UploadFileMapper uploadFileMapper;
+    @Autowired
+    private AsyncService asyncService;
     /**
      * 開始处理excel，设置今日生成状态1生成中，并放入线程池
      * @param userId
@@ -53,8 +55,9 @@ public class ExcelDealService {
         }
         scanImageEntity.setExcelStep(1);
         scanImageByDayDetailMapper.updateByPrimaryKey(scanImageEntity);
-        ExcelGenerateRunnable excelGenerateRunnable=new ExcelGenerateRunnable(scanImageEntity);
-        threadPoolExecutor.execute(excelGenerateRunnable);
+        asyncService.excelGenerateTask(scanImageEntity);
+//        ExcelGenerateRunnable excelGenerateRunnable=new ExcelGenerateRunnable(scanImageEntity);
+//        threadPoolExecutor.execute(excelGenerateRunnable);
         return  true;
     }
 
@@ -85,4 +88,6 @@ public class ExcelDealService {
         resuslt.put("failFiles",uploadFileEntities);
         return resuslt;
     }
+
+
 }

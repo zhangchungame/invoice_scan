@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({Exception.class})
     @ResponseBody
     public JsonResult exceptionDeal(HttpServletRequest request, HttpServletResponse response,Exception e){
-        logger.error(e.getMessage());
+        logger.error("请求错误",e);
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json;charset=UTF-8");
         return ResultUtil.fail(e);
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MyRunntimeException.class})
     @ResponseBody
     public JsonResult myRunntimeExceptionDeal(HttpServletRequest request, HttpServletResponse response,MyRunntimeException e){
-        logger.error(e.getMessage());
+        logger.error("请求错误"+e.getMessage());
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json;charset=UTF-8");
         return ResultUtil.fail(e);

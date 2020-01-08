@@ -28,6 +28,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
         <dependency>
@@ -118,6 +119,13 @@
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>4.1.0</version>
         </dependency>
+
+<!--        &lt;!&ndash; log4j &ndash;&gt;-->
+<!--        &lt;!&ndash; 支持log4j2的模块，注意把spring-boot-starter和spring-boot-starter-web包中的logging去掉 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-log4j2</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
     <packaging>jar</packaging>
     <build>

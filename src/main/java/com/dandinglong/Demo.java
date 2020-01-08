@@ -12,12 +12,8 @@ import java.util.List;
 
 public class Demo {
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
-        InvoiceDataEntity invoiceDataEntity=new InvoiceDataEntity();
-        invoiceDataEntity.setInvoiceCode("sdfsdf");
-        invoiceDataEntity.setPurchaserName("PurchaserNaddd123123me");
-        Field field= InvoiceDataEntity.class.getDeclaredField("PurchaserName");
-        field.setAccessible(true);
-        Object o = field.get(invoiceDataEntity);
-        System.out.println(o);
+
+        Thumbnails.of("C:\\Users\\Administrator\\Desktop\\照片2019.6-12\\4\\IMG_20191006_144731_1.jpg").scale(1).outputQuality(0.5f).toFile("f:/1-0.5.jpg");
+        Thumbnails.of("C:\\Users\\Administrator\\Desktop\\照片2019.6-12\\4\\IMG_20191006_144731_1.jpg").scale(1).outputQuality(0.8f).toFile("f:/1-0.8.jpg");
     }
 }

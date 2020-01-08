@@ -11,6 +11,8 @@ import com.qiniu.util.Auth;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 public class ImageCompressQiniu implements ImageCompress {
+    private Logger logger= LoggerFactory.getLogger(ImageCompressQiniu.class);
     @Override
     public String compress(String fileName) {
         Configuration cfg = new Configuration(Region.region0());
@@ -42,11 +45,11 @@ public class ImageCompressQiniu implements ImageCompress {
             //解析上传成功的结果
             JSONObject jsonObject = JSONObject.parseObject(response.bodyString());
             key = jsonObject.getString("key");
-            System.out.println(key);
+            logger.info(key);
             String fileName2 = key;
             String domainOfBucket = "http://qiniu.dandinglong.site";
             String finalUrl = String.format("%s/%s?imageMogr2/thumbnail/!75p", domainOfBucket, fileName2);
-            System.out.println(finalUrl);
+            logger.info(finalUrl);
             response.close();
             OkHttpClient httpClient = new OkHttpClient();
             Request request = new Request.Builder().url(finalUrl).build();
@@ -62,21 +65,22 @@ public class ImageCompressQiniu implements ImageCompress {
             }
             fileOutputStream.close();
             stream.close();
-            System.out.println(finalUrl + " download  finish");
+            logger.info(finalUrl + " download  finish");
             bucketManager.delete(bucket, key);
-            System.out.println(finalUrl + "  finish");
+            logger.info(finalUrl + "  finish");
         } catch (QiniuException ex) {
             Response r = ex.response;
-            System.err.println(r.toString());
+            logger.error(ex.getMessage(),ex);
             try {
-                System.err.println(r.bodyString());
+                logger.error(r.bodyString());
             } catch (QiniuException ex2) {
                 //ignore
+                logger.error(ex2.getMessage(),ex2);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
-        System.out.println("finalUrl");
+        logger.info("finalUrl");
         return fileName;
     }
 }

@@ -1,4 +1,4 @@
-package com.dandinglong.task;
+package com.dandinglong.service;
 
 import com.alibaba.fastjson.JSON;
 import com.dandinglong.annotation.FunctionUseTime;
@@ -13,6 +13,7 @@ import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.model.ImageCompress;
 import com.dandinglong.model.ImageRecognition;
+import com.dandinglong.model.excel.GenerateExceInvoice;
 import com.dandinglong.model.qiniu.FileSaveSys;
 import com.dandinglong.util.ApplicationContextProvider;
 import com.dandinglong.util.BaiduScanResultExchangeUtil;
@@ -20,34 +21,40 @@ import com.dandinglong.util.DateFormaterUtil;
 import com.qiniu.common.QiniuException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
-public class UploadFileDealRunnable implements Runnable {
-    private Logger logger= LoggerFactory.getLogger(UploadFileDealRunnable.class);
-    private ImageRecognition imageRecognition;
-    private UploadFileEntity uploadFileEntity;
-    private ImageCompress imageCompress;
+@Service
+public class AsyncService {
+    private Logger logger= LoggerFactory.getLogger(AsyncService.class);
+    @Autowired
+    private UploadFileMapper uploadFileMapper;
+    @Autowired
+    private InvoiceDataMapper invoiceDataMapper;
+    @Autowired
+    private InvoiceDetailMapper invoiceDetailMapper;
+    @Autowired
+    private  ScanImageByDayDetailMapper scanImageByDayDetailMapper;
 
-    public UploadFileDealRunnable(ImageRecognition imageRecognition, UploadFileEntity uploadFileEntity, ImageCompress imageCompress) {
-        this.imageRecognition = imageRecognition;
-        this.uploadFileEntity = uploadFileEntity;
-        this.imageCompress = imageCompress;
-    }
-
+    @Autowired
+    private  InvoiceProcessService invoiceProcessService;
+    @Autowired
+    private   GenerateExceInvoice generateExceInvoice;
+    @Async("getPool")
     @FunctionUseTime
-    @Override
-    public void run() {
+    public void uploadFileDealTask(ImageRecognition imageRecognition, UploadFileEntity uploadFileEntity, ImageCompress imageCompress){
         logger.info("开始处理上传的文件  {}", JSON.toJSONString(uploadFileEntity));
         ScanImageByDayDetailEntity scanImageByDayDetailEntity=new ScanImageByDayDetailEntity();
         scanImageByDayDetailEntity.setDealDate(DateFormaterUtil.YMDformater.get().format(new Date()));
         scanImageByDayDetailEntity.setUserId(uploadFileEntity.getUserId());
         scanImageByDayDetailEntity.setUpdateTime(new Date());
 
-        UploadFileMapper uploadFileMapper = ApplicationContextProvider.getBean(UploadFileMapper.class);
-        InvoiceDataMapper invoiceDataMapper = ApplicationContextProvider.getBean(InvoiceDataMapper.class);
-        InvoiceDetailMapper invoiceDetailMapper = ApplicationContextProvider.getBean(InvoiceDetailMapper.class);
-        ScanImageByDayDetailMapper scanImageByDayDetailMapper = ApplicationContextProvider.getBean(ScanImageByDayDetailMapper.class);
         JsonRootBean recognition=null;
         try {
             imageCompress.compress(uploadFileEntity.getFilePath() + uploadFileEntity.getFileName());
@@ -90,5 +97,34 @@ public class UploadFileDealRunnable implements Runnable {
         //今日识别图片数量+1
         scanImageByDayDetailMapper.scanNumAdd(scanImageByDayDetailEntity);
         logger.info("处理完成           {}",JSON.toJSONString(uploadFileEntity));
+    }
+
+    @Async("getPool")
+    @FunctionUseTime
+    public void excelGenerateTask(ScanImageByDayDetailEntity scanImageByDayDetailEntity){
+        logger.info("开始生成excel");
+        logger.info("scanImageByDayDetailEntity={}",JSON.toJSONString(scanImageByDayDetailEntity));
+        String filePath=ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("excleFileLocation");
+        List<InvoiceEntity> invoiceEntityList = null;
+        try {
+            invoiceEntityList = invoiceProcessService.getInvoiceEntityByDate(scanImageByDayDetailEntity.getDealDate(), scanImageByDayDetailEntity.getUserId());
+        } catch (ParseException e) {
+            logger.error(e.getMessage(),e);
+        }
+        try {
+            String excelFileName=generateExceInvoice.generate(invoiceEntityList,filePath);
+            excelFileName= FileSaveSys.uploadFile(filePath,excelFileName);
+            scanImageByDayDetailEntity.setExcelFile(excelFileName);
+            scanImageByDayDetailEntity.setExcelStep(2);
+            scanImageByDayDetailMapper.updateByPrimaryKey(scanImageByDayDetailEntity);
+            logger.info("生成完成");
+            logger.info("scanImageByDayDetailEntity={}",JSON.toJSONString(scanImageByDayDetailEntity));
+        } catch (NoSuchFieldException e) {
+            logger.error(e.getMessage(),e);
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(),e);
+        } catch (IOException e) {
+            logger.error(e.getMessage(),e);
+        }
     }
 }

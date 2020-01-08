@@ -21,6 +21,8 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 public class ScanProgramService {
+    private Logger logger= LoggerFactory.getLogger(ScanProgramService.class);
     @Value("${scanxiaochengxu.appId}")
     private String appId;
     @Value("${scanxiaochengxu.secret}")
@@ -59,6 +62,8 @@ public class ScanProgramService {
     private UserScoreProcessorService userScoreProcessorService;
     @Autowired
     private ScanImageByDayDetailMapper scanImageByDayDetailMapper;
+    @Autowired
+    private AsyncService asyncService;
 
     /**
      * 用户登录，为注册用户注册
@@ -103,7 +108,7 @@ public class ScanProgramService {
         Call call = client.newCall(request);
         Response execute = call.execute();
         String res = execute.body().string();
-        System.out.println(res);
+        logger.info(res);
         JSONObject jsonObject = JSONObject.parseObject(res);
         Code2Session code2Session = new Code2Session();
         if (jsonObject.getString("openid") == null) {
@@ -137,8 +142,9 @@ public class ScanProgramService {
         imageDealService.addUploadNum(userEntity);
         ImageRecognition imageRecognition=new ImageRecognitionBaidu(aipOcrClientSelector.getAvailableInvoiceClient(aipOcrClientSelector.getProcessTimes(1)));
         ImageCompress imageCompress=new ImageCompressThumb();
-        UploadFileDealRunnable uploadFileDealRunnable=new UploadFileDealRunnable(imageRecognition, uploadFileEntity,imageCompress);
-        threadPoolExecutor.execute(uploadFileDealRunnable);
+        asyncService.uploadFileDealTask(imageRecognition,uploadFileEntity,imageCompress);
+//        UploadFileDealRunnable uploadFileDealRunnable=new UploadFileDealRunnable(imageRecognition, uploadFileEntity,imageCompress);
+//        threadPoolExecutor.execute(uploadFileDealRunnable);
         return "ok";
     }
 

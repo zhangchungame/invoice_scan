@@ -1,6 +1,9 @@
 package com.dandinglong.util;
 
 import com.dandinglong.exception.MyRunntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class ResultUtil {
     public static JsonResult success(Object res){

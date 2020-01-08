@@ -8,12 +8,15 @@ import com.dandinglong.model.excel.GenerateExceInvoice;
 import com.dandinglong.model.qiniu.FileSaveSys;
 import com.dandinglong.service.InvoiceProcessService;
 import com.dandinglong.util.ApplicationContextProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
 public class ExcelGenerateRunnable implements Runnable {
+    private Logger logger= LoggerFactory.getLogger(ExcelGenerateRunnable.class);
     private ScanImageByDayDetailEntity scanImageByDayDetailEntity;
 
     public ExcelGenerateRunnable(ScanImageByDayDetailEntity scanImageByDayDetailEntity) {
@@ -22,7 +25,8 @@ public class ExcelGenerateRunnable implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("开始生成excel");
+        logger.info("开始生成excel");
+        logger.info("scanImageByDayDetailEntity={}",JSON.toJSONString(scanImageByDayDetailEntity));
         String filePath=ApplicationContextProvider.getApplicationContext().getEnvironment().getProperty("excleFileLocation");
         InvoiceProcessService invoiceProcessService = ApplicationContextProvider.getBean(InvoiceProcessService.class);
         GenerateExceInvoice generateExceInvoice = ApplicationContextProvider.getBean(GenerateExceInvoice.class);
@@ -31,7 +35,7 @@ public class ExcelGenerateRunnable implements Runnable {
         try {
             invoiceEntityList = invoiceProcessService.getInvoiceEntityByDate(scanImageByDayDetailEntity.getDealDate(), scanImageByDayDetailEntity.getUserId());
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         try {
             String excelFileName=generateExceInvoice.generate(invoiceEntityList,filePath);
@@ -39,13 +43,14 @@ public class ExcelGenerateRunnable implements Runnable {
             scanImageByDayDetailEntity.setExcelFile(excelFileName);
             scanImageByDayDetailEntity.setExcelStep(2);
             scanImageByDayDetailMapper.updateByPrimaryKey(scanImageByDayDetailEntity);
-            System.out.println("生成完成");
+            logger.info("生成完成");
+            logger.info("scanImageByDayDetailEntity={}",JSON.toJSONString(scanImageByDayDetailEntity));
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
     }
 }
