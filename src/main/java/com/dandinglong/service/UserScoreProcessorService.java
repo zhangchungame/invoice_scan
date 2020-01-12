@@ -24,4 +24,11 @@ public class UserScoreProcessorService {
             return false;
         }
     }
+
+    /**
+     * 每日恢复用户积分
+     */
+    public int recoverUserFreeScore(){
+        return userMapper.recoverUserFreeScore();
+    }
 }

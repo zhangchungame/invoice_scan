@@ -4,7 +4,9 @@ import com.dandinglong.entity.scanres.InvoiceEntity;
 import com.dandinglong.mapper.UserMapper;
 import com.dandinglong.model.excel.GenerateExceInvoice;
 import com.dandinglong.model.qiniu.FileSaveSys;
+import com.dandinglong.service.AipOcrClientSelector;
 import com.dandinglong.service.InvoiceProcessService;
+import com.dandinglong.service.UserScoreProcessorService;
 import com.dandinglong.util.JsonResult;
 import com.dandinglong.util.ResultUtil;
 import com.qiniu.common.QiniuException;
@@ -19,11 +21,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-@RestController
+//@RestController
 public class TestController {
     private Logger logger= LoggerFactory.getLogger(TestController.class);
     @Autowired
-    private UserMapper userMapper;
+    private UserScoreProcessorService userScoreProcessorService;
+    @Autowired
+    private AipOcrClientSelector aipOcrClientSelector;
     @Autowired
     private InvoiceProcessService invoiceProcessService;
     @Autowired
@@ -37,6 +41,7 @@ public class TestController {
         logger.info("***************info***************");
         logger.warn("***************warn***************");
         logger.error("***************error***************");
-        return ResultUtil.success(7);
+        userScoreProcessorService.recoverUserFreeScore();
+        return ResultUtil.success(aipOcrClientSelector.usedTimesZeroing());
     }
 }

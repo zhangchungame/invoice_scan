@@ -7,4 +7,8 @@
     <update id="consumScore" >
         update user set today_used_score=today_used_score-#{usedScore} where today_used_score>=#{usedScore} and id=#{userId}
     </update>
+
+    <update id="recoverUserFreeScore">
+        update user set today_used_score=free_score_for_day
+    </update>
 </mapper>

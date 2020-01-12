@@ -5,10 +5,7 @@ import com.dandinglong.entity.Code2Session;
 import com.dandinglong.entity.ScanImageByDayDetailEntity;
 import com.dandinglong.entity.UploadFileEntity;
 import com.dandinglong.entity.UserEntity;
-import com.dandinglong.exception.MiniProgreamLoginException;
-import com.dandinglong.exception.MultipyUserException;
-import com.dandinglong.exception.StartingGenerateExcelException;
-import com.dandinglong.exception.UserScoreNotEnoughException;
+import com.dandinglong.exception.*;
 import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.mapper.UserMapper;
@@ -86,6 +83,7 @@ public class ScanProgramService {
                 userEntity.setOpenId(openId);
                 userEntity.setTodayUsedScore(freeScore);
                 userEntity.setFreeScoreForDay(freeScore);
+                userEntity.setShowWelcome(1);
                 userEntity.setRegisterTime(new Date());
                 userEntity.setLastLoginTime(new Date());
                 userMapper.insert(userEntity);
@@ -94,6 +92,7 @@ public class ScanProgramService {
                 throw new MultipyUserException("出现多个相同openId");
         }
     }
+
 
     /**
      * 根据登录的jsCode获取openId和session_key
@@ -119,7 +118,12 @@ public class ScanProgramService {
         return code2Session;
     }
 
-
+    /**
+     * 获取用户状态
+     */
+    public UserEntity userDetail(int userId){
+        return userMapper.selectByPrimaryKey(userId);
+    }
     /**
      * 添加图片记录，新建压缩、识别客户端到线程池
      * @param filePath
@@ -141,8 +145,7 @@ public class ScanProgramService {
         uploadFileMapper.insert(uploadFileEntity);
         imageDealService.addUploadNum(userEntity);
         ImageRecognition imageRecognition=new ImageRecognitionBaidu(aipOcrClientSelector.getAvailableInvoiceClient(aipOcrClientSelector.getProcessTimes(1)));
-        ImageCompress imageCompress=new ImageCompressThumb();
-        asyncService.uploadFileDealTask(imageRecognition,uploadFileEntity,imageCompress);
+        asyncService.uploadFileDealTask(imageRecognition,uploadFileEntity);
 //        UploadFileDealRunnable uploadFileDealRunnable=new UploadFileDealRunnable(imageRecognition, uploadFileEntity,imageCompress);
 //        threadPoolExecutor.execute(uploadFileDealRunnable);
         return "ok";
@@ -195,5 +198,16 @@ public class ScanProgramService {
             result.put("data",excelDealService.excelDetail(scanImageByDayDetailEntity.getUserId(),scanImageByDayDetailEntity.getDealDate()));
             return result;
         }
+    }
+
+    /**
+     * 获取第一条batch记录的处理状态
+     */
+    public ScanImageByDayDetailEntity firstBatchDetail(int userId,int batchId){
+        ScanImageByDayDetailEntity scanImageByDayDetailEntity = scanImageByDayDetailMapper.selectByPrimaryKey(batchId);
+        if(scanImageByDayDetailEntity.getUserId()!=userId){
+            throw new BacthProcessException("处理批次用户不正确");
+        }
+        return scanImageByDayDetailEntity;
     }
 }

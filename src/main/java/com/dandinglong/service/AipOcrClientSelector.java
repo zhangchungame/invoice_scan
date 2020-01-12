@@ -76,4 +76,11 @@ public class AipOcrClientSelector {
         baiduAppProcessTimesMapper.processTimesAdd(id);
         return baiduAppProcessTimesEntity.getProcessTimes();
     }
+
+    /**
+     * 每日使用次数清零
+     */
+    public int usedTimesZeroing(){
+        return baiduAppInfoMapper.usedNumZeroing();
+    }
 }

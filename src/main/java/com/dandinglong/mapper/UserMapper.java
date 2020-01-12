@@ -8,4 +8,5 @@ import tk.mybatis.mapper.common.Mapper;
 public interface UserMapper extends Mapper<UserEntity> {
     public int updateLastLoginTime(UserEntity userEntity);
     public int consumScore(int usedScore,int userId);
+    public int recoverUserFreeScore();
 }

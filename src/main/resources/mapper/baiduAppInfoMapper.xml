@@ -4,5 +4,7 @@
     <update id="invoiceUsedNumAdd" parameterType="com.dandinglong.entity.BaiduAppInfoEntity">
         update baidu_app_info set invoice_used_num=invoice_used_num+1 where id=#{id} and invoice_used_num &lt; #{invoiceUsedNum}
     </update>
-
+    <update id="usedNumZeroing">
+        update baidu_app_info set invoice_used_num=0
+    </update>
 </mapper>

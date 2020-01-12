@@ -26,10 +26,20 @@ public class UserEntity {
     private Integer todayUsedScore;
     @Column(name = "free_score_for_day")
     private Integer freeScoreForDay;
+    @Column(name = "show_welcome")
+    private Integer showWelcome;
     @Column(name = "register_time")
     private Date registerTime;
     @Column(name = "last_login_time")
     private Date lastLoginTime;
+
+    public Integer getShowWelcome() {
+        return showWelcome;
+    }
+
+    public void setShowWelcome(Integer showWelcome) {
+        this.showWelcome = showWelcome;
+    }
 
     public Integer getTodayUsedScore() {
         return todayUsedScore;

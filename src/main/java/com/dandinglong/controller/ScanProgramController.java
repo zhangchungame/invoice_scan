@@ -25,6 +25,8 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class ScanProgramController {
@@ -44,7 +46,12 @@ public class ScanProgramController {
         session.setAttribute("code2session",login);
         session.setAttribute("userEntity",userEntity);
         logger.info("userEntity="+ JSON.toJSONString(userEntity));
-        return ResultUtil.success(session.getId());
+        Map<String,Object> result=new HashMap<>();
+        result.put("session",session.getId());
+        result.put("showWelcome",userEntity.getShowWelcome());
+        result.put("freeScore",userEntity.getTodayUsedScore());
+        result.put("userId",userEntity.getId());
+        return ResultUtil.success(result);
     }
     @FunctionUseTime
     @RequestMapping("/scan/upload")
@@ -55,7 +62,9 @@ public class ScanProgramController {
         UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
         logger.info("上传图片 fileName={}  userEntity={}  ",filename,JSON.toJSONString(userEntity));
         scanProgramService.dealUploadImage(uploadFileLocation,filename,userEntity);
-        return ResultUtil.success("OK");
+        userEntity=scanProgramService.userDetail(userEntity.getId());
+        session.setAttribute("userEntity",userEntity);
+        return ResultUtil.success(userEntity.getTodayUsedScore());
     }
     @RequestMapping("/batch/batchList")
     public JsonResult batchList(@RequestParam(value = "pageNum",defaultValue = "1")int pageNum){
@@ -73,5 +82,16 @@ public class ScanProgramController {
         HttpSession session=httpServletRequest.getSession();
         UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
         return ResultUtil.success(scanProgramService.reGenerateExcel(batchId,userEntity.getId()));
+    }
+
+    /**
+     * 批次页面刷新第一条的处理结果
+     * @return
+     */
+    @RequestMapping("/batch/firstBatch")
+    public JsonResult firstBatch(@RequestParam(value = "batchId")int batchId){
+        HttpSession session=httpServletRequest.getSession();
+        UserEntity userEntity = (UserEntity)session.getAttribute("userEntity");
+        return ResultUtil.success(scanProgramService.firstBatchDetail(userEntity.getId(),batchId));
     }
 }

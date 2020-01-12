@@ -1,15 +1,19 @@
 package com.dandinglong.model;
 
+import com.dandinglong.annotation.FunctionUseTime;
 import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 
+@Component
 public class ImageCompressThumb implements ImageCompress{
     private Logger logger= LoggerFactory.getLogger(ImageCompressThumb.class);
     @Override
+    @FunctionUseTime
     public String compress(String fileName) {
         File file=new File(fileName);
         if (file.length() < 3 * 1000 * 1000) {

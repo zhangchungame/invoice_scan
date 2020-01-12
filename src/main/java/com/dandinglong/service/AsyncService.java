@@ -12,6 +12,7 @@ import com.dandinglong.mapper.InvoiceDetailMapper;
 import com.dandinglong.mapper.ScanImageByDayDetailMapper;
 import com.dandinglong.mapper.UploadFileMapper;
 import com.dandinglong.model.ImageCompress;
+import com.dandinglong.model.ImageCompressThumb;
 import com.dandinglong.model.ImageRecognition;
 import com.dandinglong.model.excel.GenerateExceInvoice;
 import com.dandinglong.model.qiniu.FileSaveSys;
@@ -46,9 +47,11 @@ public class AsyncService {
     private  InvoiceProcessService invoiceProcessService;
     @Autowired
     private   GenerateExceInvoice generateExceInvoice;
+    @Autowired
+    private ImageCompressThumb imageCompress;
     @Async("getPool")
     @FunctionUseTime
-    public void uploadFileDealTask(ImageRecognition imageRecognition, UploadFileEntity uploadFileEntity, ImageCompress imageCompress){
+    public void uploadFileDealTask(ImageRecognition imageRecognition, UploadFileEntity uploadFileEntity){
         logger.info("开始处理上传的文件  {}", JSON.toJSONString(uploadFileEntity));
         ScanImageByDayDetailEntity scanImageByDayDetailEntity=new ScanImageByDayDetailEntity();
         scanImageByDayDetailEntity.setDealDate(DateFormaterUtil.YMDformater.get().format(new Date()));
