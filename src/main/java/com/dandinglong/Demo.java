@@ -1,50 +1,26 @@
 package com.dandinglong;
 
-import com.alibaba.fastjson.JSON;
 import com.baidu.aip.ocr.AipOcr;
 import com.baidu.aip.ocr.MyBceClient;
-import com.baidu.aip.util.AipClientConst;
 import com.baidu.aip.util.Base64Util;
-import com.baidu.aip.util.SignUtil;
 import com.baidu.aip.util.Util;
-import com.baidubce.BceClientConfiguration;
-import com.baidubce.auth.BceCredentials;
-import com.baidubce.auth.BceV1Signer;
-import com.baidubce.auth.DefaultBceCredentials;
-import com.baidubce.http.HttpMethodName;
-import com.baidubce.internal.InternalRequest;
-import com.baidubce.services.ocr.OcrClient;
-import com.dandinglong.entity.baidu.JsonRootBean;
-import com.dandinglong.entity.scanres.InvoiceDataEntity;
-import com.dandinglong.model.qiniu.FileSaveSys;
-import com.qiniu.util.Base64;
-import net.coobird.thumbnailator.Thumbnails;
-import okhttp3.*;
 import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class Demo {
     public static void main(String[] args) throws Exception {
-        byte[] data = Util.readFileByBytes("f:/img.jpg");
-        String base64Content = Base64Util.encode(data);
-        System.out.println(base64Content);
-
-        AipOcr aipOcr=new AipOcr("17864821","PmQ2gx4KovbDekph57GbscFd","GqwAUKGguPiQFxFA2T8tx8GrjzbyYUw6");
-        aipOcr.vatInvoice("f:/img.jpg",null);
+//        byte[] data = Util.readFileByBytes("f:/img.jpg");
+//        String base64Content = Base64Util.encode(data);
+//        System.out.println(base64Content);
+//
+//        AipOcr aipOcr=new AipOcr("17864821","PmQ2gx4KovbDekph57GbscFd","GqwAUKGguPiQFxFA2T8tx8GrjzbyYUw6");
+//        aipOcr.vatInvoice("f:/img.jpg",null);
 
 
 //        AipOcr aipOcr=new AipOcr("17864821","PmQ2gx4KovbDekph57GbscFd","GqwAUKGguPiQFxFA2T8tx8GrjzbyYUw6");
@@ -110,6 +86,7 @@ public class Demo {
 //        DefaultBceCredentials defaultBceCredentials = new DefaultBceCredentials("PmQ2gx4KovbDekph57GbscFd", "GqwAUKGguPiQFxFA2T8tx8GrjzbyYUw6");
 //        bceV1Signer.sign(internalRequest,defaultBceCredentials);
 //        System.out.println(1);
+
     }
 
     private static final String BCE_AUTH_VERSION = "bce-auth-v1";

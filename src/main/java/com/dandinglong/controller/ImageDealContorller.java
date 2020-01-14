@@ -26,7 +26,7 @@ public class ImageDealContorller {
         logger.info("imageType  {}   imageUrl  {}",imageType,imageUrl);
         HttpSession httpSession=request.getSession();
         UserEntity userEntity =(UserEntity) httpSession.getAttribute("userEntity");
-        scanProgramService.dealUploadImageFromQiniu(imageUrl,imageType,userEntity);
+//        scanProgramService.dealUploadImageFromQiniu(imageUrl,imageType,userEntity);
         return ResultUtil.success(1);
     }
 }
