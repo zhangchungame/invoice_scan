@@ -119,7 +119,11 @@
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>4.1.0</version>
         </dependency>
-
+<!--        <dependency>-->
+<!--            <groupId>com.baidubce</groupId>-->
+<!--            <artifactId>bce-java-sdk</artifactId>-->
+<!--            <version>0.10.92</version>-->
+<!--        </dependency>-->
 <!--        &lt;!&ndash; log4j &ndash;&gt;-->
 <!--        &lt;!&ndash; 支持log4j2的模块，注意把spring-boot-starter和spring-boot-starter-web包中的logging去掉 &ndash;&gt;-->
 <!--        <dependency>-->

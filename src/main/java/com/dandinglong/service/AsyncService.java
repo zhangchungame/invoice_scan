@@ -130,4 +130,52 @@ public class AsyncService {
             logger.error(e.getMessage(),e);
         }
     }
+
+
+    @Async("getPool")
+    @FunctionUseTime
+    public void uploadFileDealQiniuTask(ImageRecognition imageRecognition, UploadFileEntity uploadFileEntity){
+        logger.info("开始处理上传的文件  {}", JSON.toJSONString(uploadFileEntity));
+        ScanImageByDayDetailEntity scanImageByDayDetailEntity=new ScanImageByDayDetailEntity();
+        scanImageByDayDetailEntity.setDealDate(DateFormaterUtil.YMDformater.get().format(new Date()));
+        scanImageByDayDetailEntity.setUserId(uploadFileEntity.getUserId());
+        scanImageByDayDetailEntity.setUpdateTime(new Date());
+        JsonRootBean recognition=null;
+        try {
+            recognition = imageRecognition.recognitionUrl(uploadFileEntity.getFilePath() + uploadFileEntity.getFileName());
+        } catch (Exception e) {
+            logger.error("识别图片失败",e);
+            //标记图片识别失败
+            uploadFileEntity.setStep(3);
+            uploadFileEntity.setUpdateTime(new Date());
+            uploadFileMapper.updateByPrimaryKey(uploadFileEntity);
+            //今日识别图片数量+1
+            scanImageByDayDetailMapper.scanNumAdd(scanImageByDayDetailEntity);
+            logger.info("压缩或处理图片失败        {}",JSON.toJSONString(uploadFileEntity));
+            return;
+        }
+        logger.info("压缩和识别成功           {}",JSON.toJSONString(uploadFileEntity));
+        Words_result words_result = recognition.getWords_result();
+//        转换
+        InvoiceEntity invoiceEntity = BaiduScanResultExchangeUtil.exchangeInvoice(words_result);
+        //插入发票信息
+        invoiceEntity.getInvoiceDataEntity().setInsertTime(new Date());
+        invoiceEntity.getInvoiceDataEntity().setUserId(uploadFileEntity.getUserId());
+        invoiceDataMapper.insert(invoiceEntity.getInvoiceDataEntity());
+        //插入明细
+        for (int i = 0; i < invoiceEntity.getInvoiceDetailEntityList().size(); i++) {
+            invoiceEntity.getInvoiceDetailEntityList().get(i).setUserId(uploadFileEntity.getUserId());
+            invoiceEntity.getInvoiceDetailEntityList().get(i).setInvoiceId(invoiceEntity.getInvoiceDataEntity().getId());
+            invoiceEntity.getInvoiceDetailEntityList().get(i).setInsertTime(new Date());
+            invoiceDetailMapper.insert(invoiceEntity.getInvoiceDetailEntityList().get(i));
+        }
+        //图片识别成功
+        uploadFileEntity.setStep(2);
+        uploadFileEntity.setUpdateTime(new Date());
+        uploadFileMapper.updateByPrimaryKey(uploadFileEntity);
+        //今日识别图片数量+1
+        scanImageByDayDetailMapper.scanNumAdd(scanImageByDayDetailEntity);
+        logger.info("处理完成           {}",JSON.toJSONString(uploadFileEntity));
+    }
+
 }

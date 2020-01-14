@@ -1,11 +1,11 @@
 package com.dandinglong.model;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baidu.aip.ocr.AipOcr;
 import com.dandinglong.entity.baidu.JsonRootBean;
 import com.dandinglong.exception.RecognitionException;
 import com.dandinglong.task.ExcelGenerateRunnable;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +28,23 @@ public class ImageRecognitionBaidu implements ImageRecognition {
         options.put("accuracy", "high");
         org.json.JSONObject res = client.vatInvoice(image, options);
         String result = res.toString(2);
+        if (res.has("error_msg")) {
+            logger.error("百度识别失败，识别结果 {}",result);
+            throw new RecognitionException(res.getString("error_msg"));
+        }
+        JsonRootBean jsonRootBean = JSON.parseObject(result, JsonRootBean.class);
+        return jsonRootBean;
+    }
+
+    @Override
+    public JsonRootBean recognitionUrl(String url) {
+        HashMap<String, String> options = new HashMap<String, String>();
+        options.put("language_type", "CHN_ENG");
+        options.put("detect_direction", "true");
+        options.put("detect_language", "true");
+        options.put("probability", "true");
+        JSONObject res = client.basicGeneralUrl(url,options);
+        String result = res.toString(  2);
         if (res.has("error_msg")) {
             logger.error("百度识别失败，识别结果 {}",result);
             throw new RecognitionException(res.getString("error_msg"));
