@@ -1,20 +1,90 @@
 package com.dandinglong;
 
-import com.baidu.aip.ocr.AipOcr;
-import com.baidu.aip.ocr.MyBceClient;
-import com.baidu.aip.util.Base64Util;
-import com.baidu.aip.util.Util;
-import org.apache.commons.codec.binary.Hex;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dandinglong.entity.UserEntity;
+import com.dandinglong.exception.WxException;
+import com.dandinglong.util.FileNameUtil;
+import okhttp3.*;
+import okio.BufferedSink;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Demo {
     public static void main(String[] args) throws Exception {
+        Demo demo=new Demo();
+        demo.downLoadAvatar();
+    }
+    public String downLoadAvatar() throws IOException {
+        OkHttpClient okHttpClient=new OkHttpClient();
+        Request request=new Request.Builder().url("https://wx.qlogo.cn/mmopen/vi_32/YH1uvwabzSSLPeWWskRksX6IeYKhhyv2S3x67aF7IarhbMR7bglQV5FMZPzz2kR4F1dQgR7ubSO7TEWGlWHPHg/132").build();
+        Call call=okHttpClient.newCall(request);
+        Response response = call.execute();
+        String outputPath="F:/"+ FileNameUtil.generateFileName("aaa.jpg");
+        FileOutputStream fo=new FileOutputStream(outputPath);
+        fo.write(response.body().bytes());
+        return outputPath;
+    }
+    public String accessToken(String appId,String secret) throws IOException {
+        OkHttpClient client=new OkHttpClient();
+        Request request=new Request.Builder().url(String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",appId,secret)).build();
+        Call call=client.newCall(request);
+        Response response = call.execute();
+        String resp=response.body().string();
+        JSONObject jsonObject = JSON.parseObject(resp);
+        return jsonObject.getString("access_token");
+    }
+    public void makeQrCode(String filePathName,int userId) throws IOException {
+        String accessToken=accessToken("wx5cf219648df27a68","3fb427c47bf3d0d1be9488fac8353a2d");
+        System.out.println(accessToken);
+        OkHttpClient client=new OkHttpClient();
+        RequestBody formBody= new FormBody.Builder()
+                .add("scene","userId=1").build();
+        RequestBody requestBody=new RequestBody() {
+            @Nullable
+            @Override
+            public MediaType contentType() {
+                return MediaType.parse("application/json; charset=utf-8");
+            }
+
+            @Override
+            public void writeTo(@NotNull BufferedSink bufferedSink) throws IOException {
+                Map<String,String> map=new HashMap<>();
+                map.put("scene","userId=123");
+                String s = JSON.toJSONString(map);
+                System.out.println(s);
+                bufferedSink.writeUtf8(s);
+            }
+        };
+
+        Map<String,String> map=new HashMap<>();
+        map.put("scene","userId=123");
+        String s = JSON.toJSONString(map);
+        RequestBody requestBody1 = RequestBody.create(s,MediaType.parse("application/json"));
+        Request request=new Request.Builder().url("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+accessToken)
+                .post(requestBody1).build();
+        Call call=client.newCall(request);
+        Response response = call.execute();
+//        System.out.println(response.body().string());
+        FileOutputStream fileOutputStream=new FileOutputStream(filePathName);
+        ResponseBody body = response.body();
+        fileOutputStream.write(body.bytes());
+//        InputStream inputStream = body.byteStream();
+//        int len=0;
+//        byte[] bytes=new byte[1024];
+//        while((len=inputStream.read(bytes))!=-1){
+//            fileOutputStream.write(bytes,0,len);
+//        }
+        fileOutputStream.close();
+    }
+    public void test(){
+
 //        byte[] data = Util.readFileByBytes("f:/img.jpg");
 //        String base64Content = Base64Util.encode(data);
 //        System.out.println(base64Content);
@@ -87,18 +157,5 @@ public class Demo {
 //        bceV1Signer.sign(internalRequest,defaultBceCredentials);
 //        System.out.println(1);
 
-    }
-
-    private static final String BCE_AUTH_VERSION = "bce-auth-v1";
-    private static final String DEFAULT_ENCODING = "UTF-8";
-    private static final Charset UTF8 = Charset.forName(DEFAULT_ENCODING);
-    private static String sha256Hex(String signingKey, String stringToSign) throws InvalidKeyException, NoSuchAlgorithmException {
-        try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(signingKey.getBytes(UTF8), "HmacSHA256"));
-            return new String(Hex.encodeHex(mac.doFinal(stringToSign.getBytes(UTF8))));
-        } catch (Exception e) {
-            throw e;
-        }
     }
 }

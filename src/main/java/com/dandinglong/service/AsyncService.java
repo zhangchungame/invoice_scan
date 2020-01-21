@@ -23,6 +23,7 @@ import com.qiniu.common.QiniuException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -102,7 +103,7 @@ public class AsyncService {
         logger.info("处理完成           {}",JSON.toJSONString(uploadFileEntity));
     }
 
-    @Async("getPool")
+    @Async("getPoolForExcel")
     @FunctionUseTime
     public void excelGenerateTask(ScanImageByDayDetailEntity scanImageByDayDetailEntity){
         logger.info("开始生成excel");

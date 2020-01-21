@@ -11,4 +11,8 @@
     <update id="recoverUserFreeScore">
         update user set today_used_score=free_score_for_day
     </update>
+    <update id="orginalUserAddScore">
+        update user set today_used_score=today_used_score+#{addScore} where id=#{orginalUserId}
+    </update>
+
 </mapper>

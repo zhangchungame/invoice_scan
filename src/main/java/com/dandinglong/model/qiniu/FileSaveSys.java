@@ -19,6 +19,7 @@ import java.util.UUID;
 
 public class FileSaveSys {
 
+
     public static String uploadFile(String filePath,String fileName) throws QiniuException {
         Configuration cfg = new Configuration(Region.region0());
 //...其他参数参考类注释
@@ -34,7 +35,7 @@ public class FileSaveSys {
         String key = UUID.randomUUID() +"/"+FileNameUtil.generateFileName(fileName);
         Response response = uploadManager.put(filePath+fileName, key, upToken);
         JSONObject jsonObject = JSON.parseObject(response.bodyString());
-        return "http://files.dxz3000.com/"+jsonObject.getString("key");
+        return "https://files.dxz3000.com/"+jsonObject.getString("key");
     }
     public static Map<String,String> getToken(){
         String accessKey = "fpByCXWaCQe5e72WUNB644EVRZyaOVCINaUa8WA8";
@@ -44,7 +45,7 @@ public class FileSaveSys {
         String upToken = auth.uploadToken(bucket,null,1200L,null);
         Map<String ,String> result=new HashMap<>();
         result.put("token",upToken);
-        result.put("host","http://files.dxz3000.com/");
+        result.put("host","https://files.dxz3000.com/");
         return result;
     }
 }

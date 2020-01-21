@@ -24,8 +24,6 @@ public class ExcelDealService {
     @Autowired
     private ScanImageByDayDetailMapper scanImageByDayDetailMapper;
     @Autowired
-    private ThreadPoolExecutor threadPoolExecutor;
-    @Autowired
     private UploadFileMapper uploadFileMapper;
     @Autowired
     private AsyncService asyncService;

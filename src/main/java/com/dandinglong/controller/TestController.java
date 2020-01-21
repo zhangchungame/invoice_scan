@@ -1,12 +1,11 @@
 package com.dandinglong.controller;
 
-import com.dandinglong.entity.scanres.InvoiceEntity;
+import com.dandinglong.entity.UserEntity;
 import com.dandinglong.mapper.UserMapper;
 import com.dandinglong.model.excel.GenerateExceInvoice;
-import com.dandinglong.model.qiniu.FileSaveSys;
 import com.dandinglong.service.AipOcrClientSelector;
 import com.dandinglong.service.InvoiceProcessService;
-import com.dandinglong.service.UserScoreProcessorService;
+import com.dandinglong.service.UserDetailProcessorService;
 import com.dandinglong.util.JsonResult;
 import com.dandinglong.util.ResultUtil;
 import com.qiniu.common.QiniuException;
@@ -18,14 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
 
-//@RestController
+@RestController
 public class TestController {
     private Logger logger= LoggerFactory.getLogger(TestController.class);
     @Autowired
-    private UserScoreProcessorService userScoreProcessorService;
+    private UserDetailProcessorService userDetailProcessorService;
     @Autowired
     private AipOcrClientSelector aipOcrClientSelector;
     @Autowired
@@ -34,14 +31,13 @@ public class TestController {
     private GenerateExceInvoice generateExceInvoice;
     @Value("${excleFileLocation}")
     private String excleFileLocation;
+    @Autowired
+    private UserMapper userMapper;
+
     @RequestMapping("/test")
-    public JsonResult test() throws QiniuException {
-        logger.trace("***************trace***************");
-        logger.debug("***************debug***************");
-        logger.info("***************info***************");
-        logger.warn("***************warn***************");
-        logger.error("***************error***************");
-        userScoreProcessorService.recoverUserFreeScore();
-        return ResultUtil.success(aipOcrClientSelector.usedTimesZeroing());
+    public JsonResult test() throws IOException {
+        UserEntity userEntity = userMapper.selectByPrimaryKey(1);
+
+        return ResultUtil.success(userDetailProcessorService.generateUserShareImage(userEntity));
     }
 }

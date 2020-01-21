@@ -28,6 +28,14 @@ public class UserEntity {
     private Integer freeScoreForDay;
     @Column(name = "show_welcome")
     private Integer showWelcome;
+    @Column(name = "share_img_url")
+    private String shareImgUrl;
+    @Column(name = "share_img_update_time")
+    private Date shareImgUpdateTime;
+
+    @Column(name = "orginal_user_id")
+    private Integer orginalUserId;
+
     @Column(name = "register_time")
     private Date registerTime;
     @Column(name = "last_login_time")
@@ -35,6 +43,30 @@ public class UserEntity {
 
     public Integer getShowWelcome() {
         return showWelcome;
+    }
+
+    public String getShareImgUrl() {
+        return shareImgUrl;
+    }
+
+    public Integer getOrginalUserId() {
+        return orginalUserId;
+    }
+
+    public void setOrginalUserId(Integer orginalUserId) {
+        this.orginalUserId = orginalUserId;
+    }
+
+    public void setShareImgUrl(String shareImgUrl) {
+        this.shareImgUrl = shareImgUrl;
+    }
+
+    public Date getShareImgUpdateTime() {
+        return shareImgUpdateTime;
+    }
+
+    public void setShareImgUpdateTime(Date shareImgUpdateTime) {
+        this.shareImgUpdateTime = shareImgUpdateTime;
     }
 
     public void setShowWelcome(Integer showWelcome) {

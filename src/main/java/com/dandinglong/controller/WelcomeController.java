@@ -23,15 +23,15 @@ public class WelcomeController {
     @RequestMapping("/welcome")
     public JsonResult welcome(){
         List<String> res=new ArrayList<>();
-        res.add("http://files.dxz3000.com/welcome/welcome1.png");
-        res.add("http://files.dxz3000.com/welcome/welcome2.png");
-        res.add("http://files.dxz3000.com/welcome/welcome3.png");
-        res.add("http://files.dxz3000.com/welcome/welcome4.png");
-        res.add("http://files.dxz3000.com/welcome/welcome5.png");
-        res.add("http://files.dxz3000.com/welcome/welcome6.png");
-        res.add("http://files.dxz3000.com/welcome/welcome7.png");
-        res.add("http://files.dxz3000.com/welcome/welcome8.png");
-        res.add("http://files.dxz3000.com/welcome/welcome9.png");
+        res.add("https://files.dxz3000.com/welcome/welcome1.png");
+        res.add("https://files.dxz3000.com/welcome/welcome2.png");
+        res.add("https://files.dxz3000.com/welcome/welcome3.png");
+        res.add("https://files.dxz3000.com/welcome/welcome4.png");
+        res.add("https://files.dxz3000.com/welcome/welcome5.png");
+        res.add("https://files.dxz3000.com/welcome/welcome6.png");
+        res.add("https://files.dxz3000.com/welcome/welcome7.png");
+        res.add("https://files.dxz3000.com/welcome/welcome8.png");
+        res.add("https://files.dxz3000.com/welcome/welcome9.png");
         return ResultUtil.success(res);
     }
     @RequestMapping("/welcome/welcomeNotShow")

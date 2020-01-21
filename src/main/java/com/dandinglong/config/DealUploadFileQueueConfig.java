@@ -22,8 +22,15 @@ public class DealUploadFileQueueConfig {
         return queue;
     }
 
-    @Bean
+    @Bean(name = "getPool")
     public ThreadPoolExecutor getPool() {
+        BlockingQueue<Runnable> queue=new LinkedBlockingQueue<>();
+        int coreSize=Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coreSize, coreSize*2, 5, TimeUnit.MINUTES, queue);
+        return threadPoolExecutor;
+    }
+    @Bean(name = "getPoolForExcel")
+    public ThreadPoolExecutor getPoolForExcel() {
         BlockingQueue<Runnable> queue=new LinkedBlockingQueue<>();
         int coreSize=Runtime.getRuntime().availableProcessors();
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(coreSize, coreSize*2, 5, TimeUnit.MINUTES, queue);
