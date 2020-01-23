@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.dandinglong.annotation.FunctionUseTime;
 import com.dandinglong.entity.Code2Session;
 import com.dandinglong.entity.UserEntity;
+import com.dandinglong.enums.ImgTypeEnum;
 import com.dandinglong.exception.WxException;
 import com.dandinglong.service.ScanProgramService;
 import com.dandinglong.service.UserDetailProcessorService;
@@ -44,47 +45,10 @@ public class ScanProgramController {
     @Autowired
     private UserDetailProcessorService userDetailProcessorService;
 
-    @RequestMapping("/share/sharePage")
-    public JsonResult sharePage() {
-        HttpSession session = httpServletRequest.getSession();
-        UserEntity userEntitySession = (UserEntity) session.getAttribute("userEntity");
-        return ResultUtil.success(userEntitySession);
-    }
 
-    @RequestMapping("/scan/onLogin")
-    public JsonResult onLogin(@RequestParam("code") String code, @RequestParam(value = "orginal", required = false) Integer orginalUserId) throws IOException {
-        if(orginalUserId==null){
-            orginalUserId=0;
-        }
-        HttpSession session = httpServletRequest.getSession();
-        Code2Session login = userDetailProcessorService.getOpenId(code);
-        UserEntity userEntity = userDetailProcessorService.login(login.getOpenId(), orginalUserId);
-        session.setAttribute("code2session", login);
-        session.setAttribute("userEntity", userEntity);
-        logger.info("userEntity=" + JSON.toJSONString(userEntity));
-        Map<String, Object> result = new HashMap<>();
-        result.put("session", session.getId());
-        result.put("showWelcome", userEntity.getShowWelcome());
-        result.put("freeScore", userEntity.getTodayUsedScore());
-        result.put("userId", userEntity.getId());
-        return ResultUtil.success(result);
-    }
 
-    @RequestMapping("/scan/userInfo")
-    public JsonResult userInfo(@RequestBody UserEntity userEntity) throws IOException {
-        HttpSession session = httpServletRequest.getSession();
-        UserEntity userEntitySession = (UserEntity) session.getAttribute("userEntity");
-        if (userEntitySession == null) {
-            throw new WxException("请先登录");
-        }
-        userEntitySession.setAvatarUrl(userEntity.getAvatarUrl());
-        userEntitySession.setGender(userEntity.getGender());
-        userEntitySession.setNickName(userEntity.getNickName());
-        userEntitySession.setCountry(userEntity.getCountry());
-        UserEntity userEntity1 = userDetailProcessorService.updateUserInfo(userEntitySession);
-        logger.info("用户信息结果={}", userEntity1);
-        return ResultUtil.success(userEntity1);
-    }
+
+
 
     @FunctionUseTime
     @RequestMapping("/scan/upload")
@@ -120,15 +84,10 @@ public class ScanProgramController {
         return ResultUtil.success(scanProgramService.reGenerateExcel(batchId, userEntity.getId()));
     }
 
-    /**
-     * 批次页面刷新第一条的处理结果
-     *
-     * @return
-     */
-    @RequestMapping("/batch/firstBatch")
-    public JsonResult firstBatch(@RequestParam(value = "batchId") int batchId) {
-        HttpSession session = httpServletRequest.getSession();
-        UserEntity userEntity = (UserEntity) session.getAttribute("userEntity");
-        return ResultUtil.success(scanProgramService.firstBatchDetail(userEntity.getId(), batchId));
+
+
+    @RequestMapping("/scan/imgType")
+    public JsonResult imgType(){
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.dandinglong;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dandinglong.entity.UserEntity;
+import com.dandinglong.enums.ImgTypeEnum;
 import com.dandinglong.exception.WxException;
 import com.dandinglong.util.FileNameUtil;
 import okhttp3.*;
@@ -19,7 +20,10 @@ import java.util.Map;
 public class Demo {
     public static void main(String[] args) throws Exception {
         Demo demo=new Demo();
-        demo.downLoadAvatar();
+        demo.testEnum();
+    }
+    public void testEnum(){
+        System.out.println(JSON.toJSONString(ImgTypeEnum.valueList()));
     }
     public String downLoadAvatar() throws IOException {
         OkHttpClient okHttpClient=new OkHttpClient();

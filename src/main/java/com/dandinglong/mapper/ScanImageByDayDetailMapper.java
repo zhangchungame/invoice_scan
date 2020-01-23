@@ -8,4 +8,5 @@ import tk.mybatis.mapper.common.Mapper;
 public interface ScanImageByDayDetailMapper extends Mapper<ScanImageByDayDetailEntity> {
     public int uploadNumAdd(ScanImageByDayDetailEntity scanImageByDayDetailEntity);
     public int scanNumAdd(ScanImageByDayDetailEntity scanImageByDayDetailEntity);
+    public int failNumAdd(ScanImageByDayDetailEntity scanImageByDayDetailEntity);
 }

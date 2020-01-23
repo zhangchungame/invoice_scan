@@ -37,15 +37,32 @@ public class FileSaveSys {
         JSONObject jsonObject = JSON.parseObject(response.bodyString());
         return "https://files.dxz3000.com/"+jsonObject.getString("key");
     }
+
     public static Map<String,String> getToken(){
+        return getToken(1200L);
+    }
+
+    public static Map<String,String> getToken(long time){
         String accessKey = "fpByCXWaCQe5e72WUNB644EVRZyaOVCINaUa8WA8";
         String secretKey = "3UlIdigVe08V6DoHBEqtLSOs8aKZd1vEkPig8SF0";
         String bucket = "scaninvoice";
         Auth auth = Auth.create(accessKey, secretKey);
-        String upToken = auth.uploadToken(bucket,null,1200L,null);
+        String upToken = auth.uploadToken(bucket,null,time,null);
         Map<String ,String> result=new HashMap<>();
         result.put("token",upToken);
-        result.put("host","https://files.dxz3000.com/");
+        result.put("host","https://files.dxz3000.com");
+        return result;
+    }
+
+    public static Map<String,String> getTokenTmp(long time){
+        String accessKey = "fpByCXWaCQe5e72WUNB644EVRZyaOVCINaUa8WA8";
+        String secretKey = "3UlIdigVe08V6DoHBEqtLSOs8aKZd1vEkPig8SF0";
+        String bucket = "userscanupload";
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken(bucket,null,time,null);
+        Map<String ,String> result=new HashMap<>();
+        result.put("token",upToken);
+        result.put("host","http://tmp1.dxz3000.com");
         return result;
     }
 }

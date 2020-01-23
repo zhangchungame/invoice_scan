@@ -8,6 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebAppConfigurer implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MpLoginInterrupter()).addPathPatterns("/**").excludePathPatterns("/scan/onLogin");
+        registry.addInterceptor(new MpLoginInterrupter()).addPathPatterns("/**")
+                .excludePathPatterns("/upload/imgType")
+                .excludePathPatterns("/upload/qiniuToken")
+                .excludePathPatterns("/ocr/*")
+                .excludePathPatterns("/user/onLogin");
     }
 }

@@ -6,4 +6,5 @@ import tk.mybatis.mapper.common.Mapper;
 
 @Repository
 public interface UploadFileMapper extends Mapper<UploadFileEntity> {
+    public int setStep(UploadFileEntity uploadFileEntity);
 }

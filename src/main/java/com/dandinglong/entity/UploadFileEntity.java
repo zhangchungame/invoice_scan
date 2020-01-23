@@ -14,6 +14,8 @@ public class UploadFileEntity {
     private Integer id;
     @Column(name = "user_id")
     private Integer userId;
+    @Column(name = "type")
+    private String  type;
     @Column(name = "file_path")
     private String filePath;
     @Column(name = "file_name")
@@ -27,6 +29,14 @@ public class UploadFileEntity {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setId(Integer id) {

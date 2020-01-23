@@ -7,15 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
-@Table(name = "scan_image_by_day_detail")
-public class ScanImageByDayDetailEntity {
+@Table(name = "scan_image_by_day_total")
+public class ScanImageByDayTotalEntity {
     @Id
     @KeySql(useGeneratedKeys = true)
     private Integer id;
-    @Column(name = "total_id")
-    private Integer totalId;
-    @Column(name = "type")
-    private String type;
     @Column(name = "user_id")
     private Integer userId;
     @Column(name = "deal_date")
@@ -26,30 +22,10 @@ public class ScanImageByDayDetailEntity {
     private Integer scanNum;
     @Column(name = "fail_num")
     private Integer failNum;
-    @Column(name = "excel_step")
-    private Integer excelStep;
-    @Column(name = "excel_file")
-    private String excelFile;
     @Column(name = "insert_time")
     private Date insertTime;
     @Column(name = "update_time")
     private Date updateTime;
-
-    public Integer getTotalId() {
-        return totalId;
-    }
-
-    public void setTotalId(Integer totalId) {
-        this.totalId = totalId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public Integer getFailNum() {
         return failNum;
@@ -57,22 +33,6 @@ public class ScanImageByDayDetailEntity {
 
     public void setFailNum(Integer failNum) {
         this.failNum = failNum;
-    }
-
-    public String getExcelFile() {
-        return excelFile;
-    }
-
-    public void setExcelFile(String excelFile) {
-        this.excelFile = excelFile;
-    }
-
-    public Integer getExcelStep() {
-        return excelStep;
-    }
-
-    public void setExcelStep(Integer excelStep) {
-        this.excelStep = excelStep;
     }
 
     public Integer getId() {

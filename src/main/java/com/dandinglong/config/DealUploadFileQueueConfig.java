@@ -13,11 +13,16 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class DealUploadFileQueueConfig {
     @Bean
-    public BlockingQueue<Runnable> getQueue(@Value("${uploadFileLocation}")String uploadFileLocation,@Value("${excleFileLocation}")String excleFileLocation) {
+    public BlockingQueue<Runnable> getQueue(@Value("${uploadFileLocation}")String uploadFileLocation,
+                                            @Value("${excleFileLocation}")String excleFileLocation,
+                                            @Value("${mainFilePath}")String mainFilePath
+                                            ) {
         File fu=new File(uploadFileLocation);
         fu.mkdirs();
         File fe=new File(excleFileLocation);
         fe.mkdirs();
+        File fm=new File(mainFilePath);
+        fm.mkdirs();
         BlockingQueue<Runnable> queue=new LinkedBlockingQueue<>();
         return queue;
     }

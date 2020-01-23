@@ -6,6 +6,7 @@ import com.dandinglong.entity.Code2Session;
 import com.dandinglong.entity.LoginAddScoreEntity;
 import com.dandinglong.entity.ScoreAddLogEntity;
 import com.dandinglong.entity.UserEntity;
+import com.dandinglong.enums.ImgTypeEnum;
 import com.dandinglong.exception.MiniProgreamLoginException;
 import com.dandinglong.exception.MultipyUserException;
 import com.dandinglong.exception.WxException;
@@ -59,6 +60,8 @@ public class UserDetailProcessorService {
     private int orginalScore;
     @Value("${user.loginScore}")
     private int loginScore;
+    @Value("${mainFilePath}")
+    private String mainFilePath;
     @Autowired
     private ScoreAddLogMapper scoreAddLogMapper;
     @Autowired
@@ -208,12 +211,8 @@ public class UserDetailProcessorService {
      * @return
      */
     public boolean divAndCheckScore(int userId, String type) {
-        int percommitScore = 0;
-        switch (type) {
-            case "invoice":
-            default:
-                percommitScore = invoicepercommitscore;
-        }
+        ImgTypeEnum imgTypeEnum=ImgTypeEnum.getEnumByType(type);
+        int percommitScore = imgTypeEnum.getConsumScore();
         if (userMapper.consumScore(percommitScore, userId) == 1) {
             return true;
         } else {
@@ -236,7 +235,7 @@ public class UserDetailProcessorService {
         String outputPath = uploadFileLocation + outName;
         makeQrCode(qrCondePathName, userEntity.getId());
         logger.info("生成二维码成功 userId={}", userEntity.getId());
-        overlapImage("share_template.jpg", qrCondePathName, avatarPathName, userEntity.getNickName(), outputPath);
+        overlapImage(mainFilePath+"share_template.jpg", qrCondePathName, avatarPathName, userEntity.getNickName(), outputPath);
         logger.info("合成图片成功 userId={}", userEntity.getId());
         String uploadFileUrl = FileSaveSys.uploadFile(uploadFileLocation, outName);
         return uploadFileUrl;
@@ -321,20 +320,19 @@ public class UserDetailProcessorService {
      * @throws IOException
      */
     private void overlapImage(String backgroundPath, String qrCodePath, String avatarPath, String message01, String outPutPath) throws IOException {
-        URL resource = this.getClass().getClassLoader().getResource(backgroundPath);
-        File bk = new File(resource.getFile());
+        File bk = new File(backgroundPath);
         BufferedImage background = ImageIO.read(bk);
 //            BufferedImage qrCode = resizeImage(150,150,ImageIO.read(new File("这里是插入二维码图片的路径！")));
-        BufferedImage qrCode = resizeImage(150, 150, ImageIO.read(new File(qrCodePath)));
+        BufferedImage qrCode = resizeImage(200, 200, ImageIO.read(new File(qrCodePath)));
         BufferedImage avatar = resizeImage(50, 50, ImageIO.read(new File(avatarPath)));
         //在背景图片中添加入需要写入的信息，例如：扫描下方二维码，欢迎大家添加我的淘宝返利机器人，居家必备，省钱购物专属小秘书！
         //String message = "扫描下方二维码，欢迎大家添加我的淘宝返利机器人，居家必备，省钱购物专属小秘书！";
         Graphics2D g = background.createGraphics();
         g.setColor(Color.ORANGE);
-        g.setFont(new Font("微软雅黑", Font.BOLD, 20));
-        g.drawString(message01, 90, 240);
+//        g.setFont(new Font("微软雅黑", Font.BOLD, 20));
+//        g.drawString(message01, 90, 240);
         //在背景图片上添加二维码图片
-        g.drawImage(qrCode, 400, 300, qrCode.getWidth(), qrCode.getHeight(), null);
+        g.drawImage(qrCode, 350, 250, qrCode.getWidth(), qrCode.getHeight(), null);
         g.drawImage(avatar, 30, 200, avatar.getWidth(), avatar.getHeight(), null);
         g.dispose();
 //            ImageIO.write(background, "jpg", new File("这里是一个输出图片的路径"));
