@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dandinglong.mapper.ScanImageByDayTotalMapper">
+    <update id="uploadNumAdd" parameterType="com.dandinglong.entity.ScanImageByDayTotalEntity">
+        update scan_image_by_day_total set upload_num=upload_num+1 ,update_time=#{updateTime} where user_id=#{userId} and deal_date=#{dealDate}
+    </update>
+    <update id="scanNumAdd" parameterType="com.dandinglong.entity.ScanImageByDayTotalEntity">
+        update scan_image_by_day_total set scan_num=scan_num+1 ,update_time=#{updateTime} where user_id=#{userId} and deal_date=#{dealDate}
+    </update>
+    <update id="failNumAdd" parameterType="com.dandinglong.entity.ScanImageByDayTotalEntity">
+        update scan_image_by_day_total set fail_num=fail_num+1 ,update_time=#{updateTime} where user_id=#{userId} and deal_date=#{dealDate}
+    </update>
+
+    <update id="failNumDiv" parameterType="com.dandinglong.entity.ScanImageByDayDetailEntity">
+        update scan_image_by_day_total set fail_num=fail_num-1 ,update_time=#{updateTime} where user_id=#{userId} and deal_date=#{dealDate}
+    </update>
+</mapper>
